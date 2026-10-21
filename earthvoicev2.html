@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarthVoice — Speak for the Planet</title>
+
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#f5f8f4,#101713);
+  --panel: light-dark(#fff,#19221c);
+  --text: light-dark(#18251d,#edf5ef);
+  --muted: light-dark(#6c7b70,#a5b5a9);
+  --line: light-dark(#e1e9e2,#2b3a30);
+  --green: light-dark(#247a48,#6cce8b);
+  --soft: light-dark(#e9f6ec,#203a29);
+  --accent: light-dark(#dff3e4,#254832);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+}
+
+button,input,textarea,select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.top {
+  height: 66px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(20px,calc((100% - 1180px)/2));
+  gap: 18px;
+}
+
+.brand {
+  font-size: 23px;
+  font-weight: 850;
+  letter-spacing: -.8px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.leaf {
+  display: grid;
+  place-items: center;
+  background: var(--green);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+}
+
+.brand span:last-child {
+  color: var(--green);
+}
+
+.search {
+  max-width: 440px;
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 10px 16px;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+}
+
+.layout {
+  max-width: 1180px;
+  margin: 24px auto;
+  display: grid;
+  grid-template-columns: 220px minmax(0,620px) 270px;
+  gap: 22px;
+  padding: 0 16px;
+}
+
+.side,.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 17px;
+}
+
+.side {
+  padding: 17px;
+  height: max-content;
+  position: sticky;
+  top: 84px;
+}
+
+.nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  border-radius: 11px;
+  text-align: left;
+  margin: 3px 0;
+}
+
+.nav.active,.nav:hover {
+  background: var(--soft);
+  color: var(--green);
+  font-weight: 700;
+}
+
+.side-note {
+  border-top: 1px solid var(--line);
+  margin-top: 15px;
+  padding: 15px 8px 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.main {
+  min-width: 0;
+}
+
+.welcome {
+  padding: 22px 23px;
+  background: linear-gradient(125deg,#164b32,#267c4b);
+  border-radius: 17px;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.welcome .eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  font-weight: 800;
+  opacity: .8;
+}
+
+.welcome h1 {
+  font-size: 27px;
+  line-height: 1.15;
+  margin: 8px 0;
+}
+
+.welcome p {
+  margin: 0;
+  color: #d7f2df;
+}
+
+.compose {
+  padding: 17px;
+  margin-bottom: 16px;
+}
+
+.compose-head {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.compose textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 65px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  padding: 9px 0;
+}
+
+.compose-bottom {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.compose-bottom select {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 9px;
+  padding: 8px;
+}
+
+.primary {
+  background: var(--green);
+  color: white;
+  border: 0;
+  border-radius: 22px;
+  padding: 9px 18px;
+  font-weight: 750;
+}
+
+.primary:hover {
+  filter: brightness(1.08);
+}
+
+.feed-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 13px;
+}
+
+.tab {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  padding: 8px 14px;
+  border-radius: 20px;
+}
+
+.tab.active {
+  background: var(--soft);
+  color: var(--green);
+  border-color: var(--green);
+  font-weight: 700;
+}
+
+.post {
+  padding: 18px;
+  margin-bottom: 13px;
+}
+
+.post-top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.post-name {
+  font-weight: 800;
+}
+
+.handle {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tag {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 750;
+  background: var(--soft);
+  color: var(--green);
+  padding: 5px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.post p {
+  margin: 14px 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.post-art {
+  height: 125px;
+  border-radius: 12px;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: #f7fff8;
+  background: linear-gradient(135deg,#174b35,#62a76e);
+  padding: 18px;
+}
+
+.post-art.water {
+  background: linear-gradient(135deg,#075985,#38bdf8);
+}
+
+.post-art.climate {
+  background: linear-gradient(135deg,#9a3412,#f59e0b);
+}
+
+.post-art.wildlife {
+  background: linear-gradient(135deg,#365314,#84a94d);
+}
+
+.image-tools { padding: 0 16px 14px; }
+.image-search-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.image-tools input {
+  width: 100%; min-width: 0; border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px; background: var(--bg); color: var(--text);
+}
+.image-search-row input { flex: 1; }
+.secondary {
+  border: 1px solid var(--line); border-radius: 10px; background: var(--soft);
+  color: var(--text); padding: 9px 12px; font-weight: 700; white-space: nowrap;
+}
+.image-help { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+.image-preview { margin-top: 10px; display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.image-preview img {
+  display: block; max-width: 100%; width: 220px; max-height: 180px;
+  object-fit: contain; border-radius: 10px; border: 1px solid var(--line);
+}
+.post-image {
+  display: block; width: 100%; max-height: 420px; object-fit: cover;
+  border-radius: 12px; margin: 12px 0; border: 1px solid var(--line);
+}
+@media (max-width: 520px) {
+  .image-search-row { flex-direction: column; }
+  .image-search-row button { width: 100%; }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 11px;
+  flex-wrap: wrap;
+}
+
+.action {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 9px;
+}
+
+.action:hover,.action.liked {
+  background: var(--soft);
+  color: var(--green);
+}
+
+.comment-box {
+  display: none;
+  margin-top: 12px;
+}
+
+.comment-box.open {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-box input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.comment-list {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.right .card {
+  padding: 17px;
+  margin-bottom: 14px;
+}
+
+.solution-lab {
+  border: 1px solid color-mix(in srgb,var(--green) 40%,var(--line)) !important;
+  background: linear-gradient(160deg,var(--panel),var(--soft));
+}
+
+.lab-input {
+  width: 100%;
+  min-height: 78px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--bg);
+  color: var(--text);
+  padding: 10px;
+  margin: 5px 0 10px;
+}
+
+.idea-list {
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.idea-list li {
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.ai-label {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  border-radius: 20px;
+  padding: 4px 8px;
+  background: var(--soft);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.solution-output {
+  font-size: 13px;
+  color: var(--text);
+  margin-top: 10px;
+}
+
+.notice {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.45;
+}
+
+.post-solution {
+  display: none;
+  border-radius: 12px;
+  background: var(--soft);
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+
+.post-solution.open {
+  display: block;
+}
+
+.post-solution h4 {
+  margin: 0 0 7px;
+  font-size: 13px;
+}
+
+.post-solution ul {
+  margin: 0;
+  padding-left: 19px;
+}
+
+.post-solution li {
+  font-size: 13px;
+  margin: 5px 0;
+}
+
+.ai-action {
+  color: var(--green) !important;
+  font-weight: 700;
+}
+
+.card h3 {
+  font-size: 15px;
+  margin: 0 0 13px;
+}
+
+.trend {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.trend:last-child {
+  border: 0;
+}
+
+.trend-icon {
+  font-size: 20px;
+}
+
+.trend strong {
+  display: block;
+  font-size: 13px;
+}
+
+.trend small {
+  color: var(--muted);
+}
+
+.challenge {
+  background: var(--soft);
+  border-radius: 12px;
+  padding: 13px;
+}
+
+.challenge b {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.challenge p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.outline {
+  background: transparent;
+  color: var(--green);
+  border: 1px solid var(--green);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.foot {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 4px 5px 20px;
+}
+
+.empty {
+  padding: 35px;
+  text-align: center;
+  color: var(--muted);
+}
+
+@media(max-width:980px) {
+  .layout {
+    grid-template-columns: 190px minmax(0,1fr);
+  }
+
+  .right {
+    display: grid;
+    grid-column: 1/-1;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 12px;
+  }
+
+  .right .card {
+    margin-bottom: 0;
+  }
+
+  .top {
+    padding: 0 16px;
+  }
+}
+
+@media(max-width:640px) {
+  .top {
+    height: auto;
+    min-height: 62px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+  }
+
+  .brand {
+    font-size: 20px;
+  }
+
+  .search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .layout {
+    display: block;
+    margin: 14px auto;
+    padding: 0 10px;
+  }
+
+  .left {
+    position: static;
+    margin-bottom: 13px;
+    padding: 8px;
+    display: flex;
+    gap: 3px;
+    overflow: auto;
+  }
+
+  .left .nav {
+    white-space: nowrap;
+    width: auto;
+    margin: 0;
+    padding: 9px 11px;
+  }
+
+  .left .side-note {
+    display: none;
+  }
+
+  .right {
+    grid-template-columns: 1fr;
+    margin-top: 14px;
+  }
+
+  .welcome h1 {
+    font-size: 24px;
+  }
+
+  .welcome {
+    padding: 20px;
+  }
+
+  .post,.compose {
+    padding: 14px;
+  }
+
+  .tag {
+    font-size: 10px;
+  }
+}
+
+/* EARTHVOICE: GOOFY LITTLE RETRO THEME */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Righteous&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg: #fff3d6;
+  --panel: #fffdf5;
+  --text: #282044;
+  --muted: #756b83;
+  --line: #30254c;
+  --green: #287c70;
+  --soft: #d8f0d7;
+  --accent: #ffd36e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(#e9b95f 1.2px, transparent 1.2px);
+  background-size: 19px 19px;
+  color: var(--text);
+  font-family: 'Baloo 2', 'Trebuchet MS', sans-serif;
+}
+
+.top {
+  background: #ffdf83;
+  border-bottom: 3px solid var(--line);
+  box-shadow: 0 5px 0 #e8a94e;
+}
+
+.brand {
+  font-family: 'Righteous', 'Trebuchet MS', sans-serif;
+  font-size: 27px;
+  letter-spacing: .3px;
+  transform: rotate(-1deg);
+}
+
+.leaf {
+  background: #287c70;
+  border: 3px solid var(--line);
+  border-radius: 50% 50% 45% 12%;
+  box-shadow: 3px 3px 0 var(--line);
+  transform: rotate(-8deg);
+}
+
+.search, .image-tools input, input, textarea, select {
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: #fffdf5;
+  color: var(--text);
+  box-shadow: 3px 3px 0 #c9b7df;
+}
+
+.search:focus, input:focus, textarea:focus, select:focus {
+  outline: 3px dashed #e77c54;
+  outline-offset: 2px;
+}
+
+.side, .card {
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 20px 20px 20px 7px;
+  box-shadow: 5px 5px 0 var(--line);
+}
+
+.side { transform: rotate(-.35deg); }
+.card { margin-bottom: 17px; }
+.post:nth-child(even) { transform: rotate(.25deg); }
+.post:nth-child(odd) { transform: rotate(-.2deg); }
+
+.nav {
+  border: 2px solid transparent;
+  border-radius: 14px;
+  font-weight: 800;
+}
+.nav:hover, .nav.active {
+  background: #ffd36e;
+  border-color: var(--line);
+  box-shadow: 3px 3px 0 var(--line);
+  transform: translate(-1px, -1px);
+}
+
+h1, h2, h3, h4, .tag, .post-name, .compose-title, .section-title {
+  font-family: 'Righteous', 'Baloo 2', sans-serif;
+  letter-spacing: .2px;
+}
+
+h1, h2 { text-shadow: 2px 2px 0 #ffd36e; }
+
+button, .action, .primary, .secondary {
+  border: 2px solid var(--line);
+  border-radius: 13px;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 var(--line);
+}
+
+button:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.primary, #publish {
+  background: #ff875e;
+  color: #282044;
+  box-shadow: 3px 3px 0 var(--line);
+}
+
+.secondary {
+  background: #b9e4d2;
+  color: #282044;
+  box-shadow: 3px 3px 0 var(--line);
+}
+
+.action {
+  background: #f9e9ff;
+  color: #282044;
+}
+
+.ai-action {
+  background: #d8f0d7;
+}
+
+.tag {
+  background: #b9e4d2;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  color: #282044;
+  padding: 3px 10px;
+}
+
+.avatar {
+  border: 2px solid var(--line);
+  background: #ffd36e;
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.post-image, .image-preview img {
+  border: 3px solid var(--line);
+  border-radius: 18px 18px 18px 5px;
+  box-shadow: 4px 4px 0 #b9e4d2;
+}
+
+.post-art {
+  border: 2px solid var(--line);
+  border-radius: 18px 18px 18px 5px;
+}
+
+textarea { min-height: 105px; }
+.image-help, .muted, small { color: var(--muted); }
+
+hr, .divider { border-color: var(--line); }
+
+@media (max-width: 760px) {
+  .top { flex-wrap: wrap; height: auto; padding-top: 12px; padding-bottom: 12px; }
+  .brand { font-size: 23px; }
+  .side { transform: none; }
+  .post:nth-child(even), .post:nth-child(odd) { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="leaf">✳</span>
+    earth<span>voice</span>
+  </div>
+
+  <input
+    id="search"
+    class="search"
+    placeholder="Search pollution, climate, wildlife…"
+    aria-label="Search posts"
+  >
+
+  <div style="font-size:13px;color:var(--muted)">
+    🌍 One planet. Many voices.
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="side left">
+  <button class="nav active" data-nav="For you">🏡 For you</button>
+  <button class="nav" data-nav="Pollution">🌫️ Pollution</button>
+  <button class="nav" data-nav="Climate">🌡️ Climate change</button>
+  <button class="nav" data-nav="Wildlife">🦋 Wildlife</button>
+  <button class="nav" data-nav="Water">💧 Water & oceans</button>
+  <button class="nav" data-nav="Solutions">🌱 Solutions</button>
+
+  <div class="side-note">
+    A community for awareness, action, and a healthier planet.
+    <br><br>
+    Be kind. Share responsibly. Protect nature.
+  </div>
+</aside>
+
+<main class="main">
+
+  <section class="welcome">
+    <div class="eyebrow">THE PLANET NEEDS YOUR VOICE</div>
+    <h1>Speak up for a greener world.</h1>
+    <p>Share what you see. Learn from others. Turn awareness into action.</p>
+  </section>
+
+  <section class="card compose">
+    <div class="compose-head">
+      <div class="avatar">🌿</div>
+
+      <textarea
+        id="postText"
+        maxlength="500"
+        placeholder="What environmental issue matters to you today? Share a thought, a concern, or a solution…"
+      ></textarea>
+    </div>
+
+    <div class="image-tools">
+      <div class="image-search-row">
+        <input id="imageSearchQuery" type="search"
+               placeholder="Search images (e.g. plastic pollution)"
+               aria-label="Search environmental images">
+        <button type="button" class="secondary" id="imageSearchButton">🔎 Search images</button>
+      </div>
+      <input id="imageUrl" type="url"
+             placeholder="Paste a direct image URL here to attach it"
+             aria-label="Image URL">
+      <div id="imagePreview" class="image-preview" hidden>
+        <img id="imagePreviewImg" alt="Preview of image to attach">
+        <button type="button" id="removeImage" class="action">Remove image</button>
+      </div>
+      <p class="image-help">Search opens Google Images in a new tab. Choose an image, copy its direct image address, and paste it above.</p>
+    </div>
+
+    <div class="compose-bottom">
+      <select id="category" aria-label="Post category">
+        <option>Pollution</option>
+        <option>Climate</option>
+        <option>Wildlife</option>
+        <option>Water</option>
+        <option>Solutions</option>
+      </select>
+
+      <span
+        id="charCount"
+        style="color:var(--muted);font-size:12px;margin-left:auto;margin-right:8px"
+      >0/500</span>
+
+      <button class="primary" id="publish">
+        Post to EarthVoice ↗
+      </button>
+    </div>
+  </section>
+
+  <div class="feed-tabs">
+    <button class="tab active" data-sort="latest">Latest</button>
+    <button class="tab" data-sort="popular">Popular</button>
+  </div>
+
+  <div id="feed"></div>
+
+</main>
+
+<aside class="right">
+
+  <section class="card solution-lab">
+    <div class="ai-label">✦ AI SOLUTION LAB</div>
+
+    <h3 style="margin-top:10px">Turn a problem into a plan</h3>
+
+    <p style="font-size:13px;color:var(--muted);margin:0 0 8px">
+      Describe an environmental harm and get practical ideas to help solve it.
+    </p>
+
+    <textarea
+      id="issueInput"
+      class="lab-input"
+      maxlength="500"
+      placeholder="Example: Plastic waste is collecting near my college..."
+      aria-label="Describe an environmental problem"
+    ></textarea>
+
+    <select
+      id="issueCategory"
+      style="width:100%;border:1px solid var(--line);border-radius:9px;padding:9px;background:var(--panel);color:var(--text);margin-bottom:10px"
+    >
+      <option value="Pollution">Air & land pollution</option>
+      <option value="Water">Water pollution</option>
+      <option value="Climate">Climate change</option>
+      <option value="Wildlife">Wildlife & habitat loss</option>
+      <option value="Solutions">Waste & sustainability</option>
+    </select>
+
+    <button
+      class="primary"
+      id="getIdeas"
+      style="width:100%"
+    >
+      ✨ Suggest solutions
+    </button>
+
+    <div id="ideaOutput" class="solution-output" aria-live="polite"></div>
+
+    <div class="notice">
+      Demo mode: suggestions are generated from built-in guidance, not a live AI service.
+      Check local rules and expert advice for serious hazards.
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🌍 Topics to explore</h3>
+
+    <div class="trend">
+      <span class="trend-icon">🌫️</span>
+      <div>
+        <strong>#CleanAir</strong>
+        <small>Air quality & emissions</small>
+      </div>
+    </div>
+
+    <div class="trend">
+      <span class="trend-icon">🧴</span>
+      <div>
+        <strong>#PlasticFree</strong>
+        <small>Waste & single-use plastic</small>
+      </div>
+    </div>
+
+    <div class="trend">
+      <span class="trend-icon">🌡️</span>
+      <div>
+        <strong>#ClimateAction</strong>
+        <small>Warming & climate solutions</small>
+      </div>
+    </div>
+
+    <div class="trend">
+      <span class="trend-icon">🐢</span>
+      <div>
+        <strong>#ProtectWildlife</strong>
+        <small>Habitats & biodiversity</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🌱 Small action, real impact</h3>
+
+    <div class="challenge">
+      <b id="challengeTitle">Today's planet challenge</b>
+
+      <p id="challengeText">
+        Carry a reusable bottle or cup today and skip one disposable item.
+      </p>
+
+      <button class="outline" id="done">I did this ✓</button>
+    </div>
+  </section>
+
+  <div class="foot">
+    EarthVoice is a community concept demo.
+    Posts are stored only in this browser.
+    Be thoughtful and verify claims before sharing.
+  </div>
+
+</aside>
+</div>
+
+<script>
+const starter = [
+  {
+    id: 1,
+    name: 'Aarav Green',
+    handle: '@aaravfornature',
+    category: 'Pollution',
+    text: 'Our streets are not dustbins. 🌱 I joined a neighbourhood clean-up this weekend and was shocked by how much single-use plastic we collected. Small community actions can make public spaces healthier. Who else is organising a clean-up?',
+    art: 'A cleaner street starts with us',
+    likes: 28,
+    comments: ['Love this initiative!', 'Count me in for the next one.'],
+    liked: false,
+    time: '12 min ago'
+  },
+  {
+    id: 2,
+    name: 'Maya Ocean',
+    handle: '@blueplanetmaya',
+    category: 'Water',
+    text: 'Rivers carry our choices downstream. Reducing plastic waste, disposing of chemicals properly, and supporting local river clean-ups can all help protect aquatic life. 💧',
+    art: 'Keep our rivers alive',
+    likes: 19,
+    comments: ['Every drop matters.'],
+    liked: false,
+    time: '34 min ago'
+  },
+  {
+    id: 3,
+    name: 'Climate Notes',
+    handle: '@climatenotes',
+    category: 'Climate',
+    text: 'Climate action is not only about big policies. Saving energy, walking or taking public transport when practical, reducing food waste, and supporting cleaner energy all contribute to a wider solution. 🌍',
+    art: 'There is no Planet B',
+    likes: 43,
+    comments: ['Collective action is powerful.', 'Great reminder.'],
+    liked: false,
+    time: '1 hr ago'
+  },
+  {
+    id: 4,
+    name: 'Wild Earth',
+    handle: '@wildearth',
+    category: 'Wildlife',
+    text: 'Healthy forests and wetlands are homes for countless species. Protecting habitats and keeping litter out of natural areas helps wildlife thrive. Leave nature better than you found it. 🦋',
+    art: 'Wildlife needs wild places',
+    likes: 35,
+    comments: ['Protect their home.'],
+    liked: false,
+    time: '2 hrs ago'
+  },
+  {
+    id: 5,
+    name: 'Green Steps',
+    handle: '@greenstepsdaily',
+    category: 'Solutions',
+    text: 'A simple challenge for this week: repair or reuse one item instead of throwing it away. The best waste is often the waste we never create. ♻️ What will you reuse?',
+    art: 'Reuse more. Waste less.',
+    likes: 16,
+    comments: [],
+    liked: false,
+    time: '3 hrs ago'
+  }
+];
+
+let posts;
+
+try {
+  posts = JSON.parse(localStorage.getItem('earthvoice_posts')) || starter;
+} catch (e) {
+  posts = starter;
+}
+
+let activeNav = 'For you';
+let sortMode = 'latest';
+let searchTerm = '';
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}[c]));
+
+function save() {
+  try {
+    localStorage.setItem('earthvoice_posts', JSON.stringify(posts));
+  } catch (e) {}
+}
+
+function render() {
+  let list = posts.filter(p =>
+    (activeNav === 'For you' || p.category === activeNav) &&
+    (`${p.name} ${p.handle} ${p.category} ${p.text}`)
+      .toLowerCase()
+      .includes(searchTerm)
+  );
+
+  if (sortMode === 'popular') {
+    list.sort((a, b) => b.likes - a.likes);
+  } else {
+    list.sort((a, b) => b.id - a.id);
+  }
+
+  const feed = document.getElementById('feed');
+
+  if (!list.length) {
+    feed.innerHTML =
+      '<div class="card empty">No posts found. Try another topic or be the first to share!</div>';
+    return;
+  }
+
+  feed.innerHTML = list.map(p => `
+    <article class="card post">
+
+      <div class="post-top">
+        <div class="avatar">
+          ${
+            p.category === 'Water' ? '💧' :
+            p.category === 'Wildlife' ? '🦋' :
+            p.category === 'Climate' ? '🌡️' :
+            p.category === 'Solutions' ? '🌱' : '🌍'
+          }
+        </div>
+
+        <div>
+          <div class="post-name">${esc(p.name)}</div>
+          <div class="handle">
+            ${esc(p.handle)} · ${esc(p.time || 'just now')}
+          </div>
+        </div>
+
+        <span class="tag">${esc(p.category)}</span>
+      </div>
+
+      <p>${esc(p.text)}</p>
+
+      ${
+        p.imageUrl && /^https?:\/\//i.test(p.imageUrl)
+          ? `<img class="post-image" src="${esc(p.imageUrl)}" alt="Environmental issue shared in this post" loading="lazy" referrerpolicy="no-referrer" onerror="this.alt='Image could not be loaded';this.style.display='none'">`
+          : ''
+      }
+
+      ${
+        p.art
+          ? `<div class="post-art ${p.category.toLowerCase()}">${esc(p.art)}</div>`
+          : ''
+      }
+
+      <div class="actions">
+        <button class="action ${p.liked ? 'liked' : ''}" data-like="${p.id}">
+          ${p.liked ? '♥' : '♡'} ${p.likes} Like
+        </button>
+
+        <button class="action" data-comment="${p.id}">
+          ▢ ${p.comments.length} Comment${p.comments.length === 1 ? '' : 's'}
+        </button>
+
+        <button class="action" data-share="${p.id}">
+          ↗ Share
+        </button>
+
+        <button class="action ai-action" data-solve="${p.id}">
+          ✦ Solution ideas
+        </button>
+      </div>
+
+      <div class="post-solution" id="solution-${p.id}"></div>
+
+      <div class="comment-box" id="comments-${p.id}">
+        <input
+          id="input-${p.id}"
+          maxlength="180"
+          placeholder="Add a constructive comment…"
+        >
+        <button class="primary" data-send="${p.id}">Reply</button>
+      </div>
+
+      <div class="comment-list">
+        ${p.comments.map(c => `<div>💬 ${esc(c)}</div>`).join('')}
+      </div>
+
+    </article>
+  `).join('');
+}
+
+document.getElementById('postText').addEventListener('input', e => {
+  document.getElementById('charCount').textContent =
+    e.target.value.length + '/500';
+});
+
+document.getElementById('publish').addEventListener('click', () => {
+  const text = document.getElementById('postText').value.trim();
+
+  if (!text) {
+    document.getElementById('postText').focus();
+    return;
+  }
+
+  const cat = document.getElementById('category').value;
+
+  posts.push({
+    id: Date.now(),
+    name: 'You',
+    handle: '@you',
+    category: cat,
+    text: text,
+    imageUrl: document.getElementById('imageUrl').value.trim(),
+    art: '',
+    likes: 0,
+    comments: [],
+    liked: false,
+    time: 'just now'
+  });
+
+  save();
+
+  document.getElementById('postText').value = '';
+  document.getElementById('imageUrl').value = '';
+  document.getElementById('imagePreview').hidden = true;
+  document.getElementById('imagePreviewImg').removeAttribute('src');
+  document.getElementById('charCount').textContent = '0/500';
+  save();
+  render();
+});
+
+// Search environmental images with Google Images.
+document.getElementById('imageSearchButton').addEventListener('click', () => {
+  const query = document.getElementById('imageSearchQuery').value.trim();
+  if (!query) {
+    document.getElementById('imageSearchQuery').focus();
+    return;
+  }
+  window.open(
+    'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(query),
+    '_blank',
+    'noopener,noreferrer'
+  );
+});
+
+// Preview a direct image URL before posting.
+const imageUrlInput = document.getElementById('imageUrl');
+const imagePreview = document.getElementById('imagePreview');
+const imagePreviewImg = document.getElementById('imagePreviewImg');
+
+function updateImagePreview() {
+  const url = imageUrlInput.value.trim();
+  if (/^https?:\/\//i.test(url)) {
+    imagePreviewImg.src = url;
+    imagePreview.hidden = false;
+  } else {
+    imagePreview.hidden = true;
+    imagePreviewImg.removeAttribute('src');
+  }
+}
+imageUrlInput.addEventListener('input', updateImagePreview);
+imagePreviewImg.addEventListener('error', () => { imagePreview.hidden = true; });
+document.getElementById('removeImage').addEventListener('click', () => {
+  imageUrlInput.value = '';
+  imagePreviewImg.removeAttribute('src');
+  imagePreview.hidden = true;
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  render();
+});
+
+document.querySelectorAll('[data-nav]').forEach(button => {
+  button.addEventListener('click', () => {
+    activeNav = button.dataset.nav;
+    document.querySelectorAll('[data-nav]').forEach(item =>
+      item.classList.toggle('active', item === button)
+    );
+    render();
+  });
+});
+
+document.querySelectorAll('[data-sort]').forEach(button => {
+  button.addEventListener('click', () => {
+    sortMode = button.dataset.sort;
+    document.querySelectorAll('[data-sort]').forEach(item =>
+      item.classList.toggle('active', item === button)
+    );
+    render();
+  });
+});
+
+function makeIdeas(issue, category) {
+  const text = issue.toLowerCase();
+  let ideas = [];
+
+  if (category === 'Water' || /river|ocean|water|drain|sewage|lake/.test(text)) {
+    ideas = [
+      'Record the location and type of pollution, without touching unknown substances.',
+      'Report the issue to the local municipal or environmental authority with photos if safe.',
+      'Reduce plastic use and organise a supervised clean-up only where it is safe to do so.',
+      'Encourage proper waste disposal and share verified information with your community.'
+    ];
+  } else if (category === 'Climate' || /heat|warming|emission|climate|carbon/.test(text)) {
+    ideas = [
+      'Reduce avoidable energy use and choose efficient appliances where possible.',
+      'Walk, cycle, carpool or use public transport when practical and safe.',
+      'Reduce food waste and choose reusable products instead of disposable ones.',
+      'Support local tree care and evidence-based climate initiatives.'
+    ];
+  } else if (category === 'Wildlife' || /animal|wildlife|forest|habitat|bird|species/.test(text)) {
+    ideas = [
+      'Keep litter and plastic away from natural habitats.',
+      'Avoid disturbing or feeding wild animals; contact a local wildlife rescue or authority if an animal is in danger.',
+      'Support habitat restoration and native-plant projects led by reputable groups.',
+      'Document the concern from a safe distance and report it to the relevant authority.'
+    ];
+  } else if (category === 'Solutions' || /plastic|garbage|trash|waste|litter|recycl/.test(text)) {
+    ideas = [
+      'Identify the main source of waste and place clearly labelled bins where permitted.',
+      'Promote reusable items, repair, reuse and responsible recycling.',
+      'Ask a school, college, shop or local council to reduce unnecessary single-use packaging.',
+      'Organise a community clean-up with permission, gloves and appropriate supervision.'
+    ];
+  } else {
+    ideas = [
+      'Document what is happening, where and when, only from a safe location.',
+      'Check information with reliable environmental or public-health sources.',
+      'Report the issue to the relevant local authority or a trusted community organisation.',
+      'Start a small community awareness campaign and agree on one measurable action.'
+    ];
+  }
+
+  return ideas;
+}
+
+document.getElementById('getIdeas').addEventListener('click', () => {
+  const issue = document.getElementById('issueInput').value.trim();
+  const category = document.getElementById('issueCategory').value;
+  const output = document.getElementById('ideaOutput');
+
+  if (!issue) {
+    output.textContent = 'Please describe an environmental issue first.';
+    document.getElementById('issueInput').focus();
+    return;
+  }
+
+  const ideas = makeIdeas(issue, category);
+  output.innerHTML = '<strong>Practical next steps</strong><ol class="idea-list">' +
+    ideas.map(idea => `<li>${esc(idea)}</li>`).join('') +
+    '</ol><p class="notice">These are general suggestions, not live AI advice. Avoid handling hazardous waste or entering unsafe areas.</p>';
+});
+
+document.getElementById('feed').addEventListener('click', async event => {
+  const button = event.target.closest('button');
+  if (!button) return;
+
+  if (button.dataset.like) {
+    const post = posts.find(p => String(p.id) === button.dataset.like);
+    if (!post) return;
+    post.liked = !post.liked;
+    post.likes = Math.max(0, Number(post.likes || 0) + (post.liked ? 1 : -1));
+    save();
+    render();
+    return;
+  }
+
+  if (button.dataset.comment) {
+    const box = document.getElementById(`comments-${button.dataset.comment}`);
+    if (box) {
+      box.classList.toggle('open');
+      if (box.classList.contains('open')) {
+        document.getElementById(`input-${button.dataset.comment}`)?.focus();
+      }
+    }
+    return;
+  }
+
+  if (button.dataset.send) {
+    const post = posts.find(p => String(p.id) === button.dataset.send);
+    const input = document.getElementById(`input-${button.dataset.send}`);
+    const comment = input?.value.trim();
+    if (!post || !comment) {
+      input?.focus();
+      return;
+    }
+    post.comments = Array.isArray(post.comments) ? post.comments : [];
+    post.comments.push(comment);
+    save();
+    render();
+    const box = document.getElementById(`comments-${button.dataset.send}`);
+    box?.classList.add('open');
+    return;
+  }
+
+  if (button.dataset.share) {
+    const post = posts.find(p => String(p.id) === button.dataset.share);
+    if (!post) return;
+    const shareText = `${post.text}\n— EarthVoice`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'EarthVoice', text: shareText });
+      } else if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareText);
+        button.textContent = '✓ Copied';
+      } else {
+        window.prompt('Copy this post to share:', shareText);
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') window.prompt('Copy this post to share:', shareText);
+    }
+    return;
+  }
+
+  if (button.dataset.solve) {
+    const post = posts.find(p => String(p.id) === button.dataset.solve);
+    const panel = document.getElementById(`solution-${button.dataset.solve}`);
+    if (!post || !panel) return;
+
+    if (panel.classList.contains('open')) {
+      panel.classList.remove('open');
+      panel.innerHTML = '';
+      return;
+    }
+
+    const ideas = makeIdeas(post.text, post.category);
+    panel.innerHTML = '<h4>🌱 Possible next steps</h4><ul>' +
+      ideas.map(idea => `<li>${esc(idea)}</li>`).join('') + '</ul>' +
+      '<p class="notice">General guidance only. Check local rules and expert advice for serious hazards.</p>';
+    panel.classList.add('open');
+  }
+});
+
+document.getElementById('done').addEventListener('click', () => {
+  const button = document.getElementById('done');
+  button.textContent = '✓ Challenge completed!';
+  button.disabled = true;
+  button.style.opacity = '.7';
+});
+
+render();
+</script>
+</body>
+</html>
